@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "@types/node": "^18.15.5",
+    "typescript": "^5.0.2"
+  },
+  "name": "labecommerce-backend",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node ./build/index.js",
+    "data": "tsc && node ./build/database.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nlperri/labecommerce-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nlperri/labecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/nlperri/labecommerce-backend#readme"
+}
