@@ -1,7 +1,7 @@
 import { products } from '../database'
 import AppError from '../error'
 
-export function getProductsByIdHandler(id: string) {
+export function getProductByIdHandler(id: string) {
   const productToFind = products.find((product) => product.id === id)
 
   if (!productToFind) {

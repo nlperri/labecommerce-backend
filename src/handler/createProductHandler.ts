@@ -2,7 +2,7 @@ import { products } from '../database'
 import AppError from '../error'
 import { TProduct } from '../types'
 
-export function createProduct(body: TProduct) {
+export function createProductHandler(body: TProduct) {
   const { id, name, price, category } = body
 
   if (!id || !name || !price || !category) {
