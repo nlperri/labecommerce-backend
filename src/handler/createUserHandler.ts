@@ -1,21 +1,22 @@
-import { users } from '../database'
 import AppError from '../error'
+import { userRepository } from '../repositories/contracts/userRepository'
+
 import { TUser } from '../types'
 
-export function createUserHandler(body: TUser) {
+export function createUserHandler(body: TUser, userRepository: userRepository) {
   const { id, email, password } = body
 
   if (!id || !email || !password) {
     throw new AppError('Campos inválidos', 400)
   }
 
-  const idAlreadyExists = users.find((user) => user.id === id)
+  const idAlreadyExists = userRepository.idExists(id)
 
   if (idAlreadyExists) {
     throw new AppError('Id já cadastrado', 409)
   }
 
-  const emailAlreadyExists = users.find((user) => user.email === email)
+  const emailAlreadyExists = userRepository.emailExists(email)
 
   if (emailAlreadyExists) {
     throw new AppError('E-mail já cadastrado', 409)
@@ -27,5 +28,5 @@ export function createUserHandler(body: TUser) {
     password,
   }
 
-  users.push(newUser)
+  userRepository.create(newUser)
 }
