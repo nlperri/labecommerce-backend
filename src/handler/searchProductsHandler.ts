@@ -7,6 +7,10 @@ export function searchProductsHandler(
 ) {
   const result = productRepository.searchProducts(query)
 
+  if (query.length === 0) {
+    throw new AppError('Campos inválidos', 400)
+  }
+
   if (result.length === 0) {
     throw new AppError('Produto não encontrado', 404)
   }

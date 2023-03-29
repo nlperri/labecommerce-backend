@@ -17,13 +17,13 @@ app.use(router)
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   if (err instanceof AppError) {
     return response.status(err.statusCode).json({
-      ststus: 'error',
+      status: response.statusCode,
       message: err.message,
     })
   }
   console.log(err)
   return response.status(500).json({
-    status: 'error',
+    status: response.statusCode,
     message: 'Internal server error',
   })
 })
