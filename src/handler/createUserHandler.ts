@@ -1,6 +1,5 @@
 import AppError from '../error'
 import { userRepository } from '../repositories/contracts/userRepository'
-
 import { TUser } from '../types'
 
 export function createUserHandler(body: TUser, userRepository: userRepository) {

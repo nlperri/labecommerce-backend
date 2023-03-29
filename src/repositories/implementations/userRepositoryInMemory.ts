@@ -3,13 +3,13 @@ import { TUser } from '../../types'
 import { userRepository } from '../contracts/userRepository'
 
 export class userRepositoryInMemory implements userRepository {
-  getUserById(id: string) {
+  getUserById(id: string): TUser | undefined {
     return users.find((user) => user.id === id)
   }
-  deleteUser(id: string) {
+  deleteUser(id: string): void {
     const user = users.findIndex((user) => user.id === id)
 
-    return users.splice(user, 1)
+    users.splice(user, 1)
   }
   idExists(id: string): boolean {
     return !!users.find((user) => user.id === id)

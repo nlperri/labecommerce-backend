@@ -1,8 +1,11 @@
-import { purchases } from '../database'
 import AppError from '../error'
+import { purchaseRepository } from '../repositories/contracts/purchaseRepository'
 import { TPurchase } from '../types'
 
-export function createPurchaseHandler(body: TPurchase) {
+export function createPurchaseHandler(
+  body: TPurchase,
+  purchaseRepository: purchaseRepository
+) {
   const { userId, productId, quantity, totalPrice } = body
 
   if (!userId || !productId || !quantity || !totalPrice) {
@@ -16,5 +19,5 @@ export function createPurchaseHandler(body: TPurchase) {
     totalPrice,
   }
 
-  purchases.push(newPurchase)
+  purchaseRepository.create(newPurchase)
 }

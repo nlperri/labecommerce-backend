@@ -1,8 +1,11 @@
-import { products } from '../database'
 import AppError from '../error'
+import { productRepository } from '../repositories/contracts/productRepository'
 
-export function getProductByIdHandler(id: string) {
-  const productToFind = products.find((product) => product.id === id)
+export function getProductByIdHandler(
+  id: string,
+  productRepository: productRepository
+) {
+  const productToFind = productRepository.getProductById(id)
 
   if (!productToFind) {
     throw new AppError('Produto não encontrado', 404)

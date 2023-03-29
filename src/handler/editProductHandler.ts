@@ -1,18 +1,25 @@
-import { products } from '../database'
 import AppError from '../error'
+import { productRepository } from '../repositories/contracts/productRepository'
 import { TProduct } from '../types'
 
-export function editProductHandler(body: TProduct) {
+export function editProductHandler(
+  body: TProduct,
+  productRepository: productRepository
+) {
   const { name, price, category, id } = body
+
+  if (!body) {
+    throw new AppError('Campo inválido', 400)
+  }
 
   const newName = name || undefined
   const newPrice = price
   const newCategory = category || undefined
 
-  const product = products.find((product) => product.id === id)
+  const product = productRepository.getProductById(id)
 
   if (!product) {
-    throw new AppError('Produto não encontrada', 404)
+    throw new AppError('Produto não encontrado', 404)
   }
 
   product.name = newName || product.name
