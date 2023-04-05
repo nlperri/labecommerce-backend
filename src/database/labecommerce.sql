@@ -94,3 +94,46 @@ OFFSET 1;
 SELECT * FROM products
 WHERE price >= 100 AND price <= 300
 ORDER BY price ASC;
+
+
+CREATE TABLE purchases (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    total_price REAL NOT NULL,
+    paid INTEGER NOT NULL DEFAULT 0,
+    delivered_at TEXT,
+    buyer_id TEXT NOT NULL,
+    FOREIGN KEY (buyer_id) REFERENCES users(id)
+);
+
+
+INSERT INTO purchases (id, total_price, buyer_id)
+VALUES ("pu001", 199.9, "u001"),
+("pu002", 349.9, "u001"),
+("pu003", 69.9,"u002");
+
+SELECT * FROM purchases;
+
+UPDATE purchases
+SET paid = 1
+WHERE id = "pu002";
+
+UPDATE purchases
+SET delivered_at = DATETIME('now')
+WHERE id = "pu002";
+
+
+
+
+SELECT 
+users.id AS userId,
+users.email,
+purchases.id AS purchaseId,
+purchases.total_price AS totalPrice,
+(CASE WHEN purchases.paid = 0 THEN 'not paid' ELSE 'paid' END) AS paid,
+purchases.delivered_at AS deliveredAt,
+purchases.buyer_id AS buyerId
+FROM users 
+INNER JOIN purchases
+ON users.id = purchases.buyer_id;
+
+DROP TABLE purchases;
