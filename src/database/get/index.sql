@@ -9,7 +9,7 @@ ORDER BY email ASC;
 SELECT * from products;
 
 SELECT * FROM products
-WHERE name LIKE "%colar%";
+WHERE name LIKE "%Colar%";
 
 SELECT * FROM products
 WHERE id = "p001";

@@ -1,4 +1,6 @@
+import 'reflect-metadata'
 import express, { NextFunction, Request, Response, Router } from 'express'
+import 'express-async-errors'
 import cors from 'cors'
 import { routerFactory } from './routes'
 import AppError from './error'
@@ -21,7 +23,6 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
       message: err.message,
     })
   }
-  console.log(err)
   return response.status(500).json({
     status: response.statusCode,
     message: 'Internal server error',

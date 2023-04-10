@@ -4,7 +4,7 @@ import { userRepository } from '../repositories/contracts/userRepository'
 import { TUser } from '../types'
 import { validator } from '../validators/contracts/validator'
 
-export function createUserHandler(
+export async function createUserHandler(
   body: TUser,
   userRepository: userRepository,
   fieldValidator: validator
@@ -37,13 +37,13 @@ export function createUserHandler(
     )
   }
 
-  const idAlreadyExists = userRepository.idExists(id)
+  const idAlreadyExists = await userRepository.idExists(id)
 
   if (idAlreadyExists) {
     throw new AppError('Id já cadastrado', 409)
   }
 
-  const emailAlreadyExists = userRepository.emailExists(email)
+  const emailAlreadyExists = await userRepository.emailExists(email)
 
   if (emailAlreadyExists) {
     throw new AppError('E-mail já cadastrado', 409)
@@ -55,5 +55,5 @@ export function createUserHandler(
     password,
   }
 
-  userRepository.create(newUser)
+  await userRepository.create(newUser)
 }

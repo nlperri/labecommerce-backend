@@ -5,16 +5,16 @@ import { userRepository } from '../repositories/contracts/userRepository'
 import { TPurchase } from '../types'
 import { validator } from '../validators/contracts/validator'
 
-export function createPurchaseHandler(
+export async function createPurchaseHandler(
   body: TPurchase,
   purchaseRepository: purchaseRepository,
   userRepository: userRepository,
   productRepository: productRepository,
   fieldValidator: validator
 ) {
-  const { userId, productId, quantity, totalPrice } = body
+  const { userId, id, totalPrice, paid } = body
 
-  if (!userId || !productId || !quantity || !totalPrice) {
+  if (!userId || !id || !paid || !totalPrice) {
     throw new AppError('Campos inválidos', 400)
   }
 
@@ -24,8 +24,8 @@ export function createPurchaseHandler(
       value: userId,
     },
     {
-      key: 'product id',
-      value: productId,
+      key: 'id',
+      value: id,
     },
   ])
 
@@ -38,8 +38,8 @@ export function createPurchaseHandler(
 
   const validatedNumbers = fieldValidator.isFieldsNumbers([
     {
-      key: 'quantity',
-      value: quantity,
+      key: 'paid',
+      value: paid,
     },
     {
       key: 'total price',
@@ -54,31 +54,35 @@ export function createPurchaseHandler(
     )
   }
 
-  const userExists = userRepository.idExists(userId)
+  const userExists = await userRepository.idExists(userId)
 
   if (!userExists) {
     throw new AppError('Usuário não encontrado', 400)
   }
 
-  const product = productRepository.getProductById(productId)
+  // const product = await productRepository.getProductById(productId)
 
-  if (!product) {
-    throw new AppError('Produto não encontrado', 400)
-  }
+  // if (!product) {
+  //   throw new AppError('Produto não encontrado', 400)
+  // }
 
-  if (product.price * quantity !== totalPrice) {
-    throw new AppError(
-      'Preço total deve ser equivalente ao preço do produto e a quantidade adicionada a compra',
-      400
-    )
+  // if (product.price * quantity !== totalPrice) {
+  //   throw new AppError(
+  //     'Preço total deve ser equivalente ao preço do produto e a quantidade adicionada a compra',
+  //     400
+  //   )
+  // }
+
+  if (paid !== 0 && paid !== 1) {
+    throw new AppError('Paid deve ser 0 ou 1', 400)
   }
 
   const newPurchase: TPurchase = {
     userId,
-    productId,
-    quantity,
+    id,
+    paid,
     totalPrice,
   }
 
-  purchaseRepository.create(newPurchase)
+  await purchaseRepository.create(newPurchase)
 }

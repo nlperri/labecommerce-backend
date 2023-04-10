@@ -1,11 +1,11 @@
 import AppError from '../error'
 import { productRepository } from '../repositories/contracts/productRepository'
 
-export function searchProductsHandler(
+export async function searchProductsHandler(
   query: string,
   productRepository: productRepository
 ) {
-  const result = productRepository.searchProducts(query)
+  const result = await productRepository.searchProducts(query)
 
   if (query.length === 0) {
     throw new AppError('Campos inválidos', 400)

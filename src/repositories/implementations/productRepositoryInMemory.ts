@@ -1,25 +1,37 @@
 import { products } from '../../database'
+import { db } from '../../database/knex'
 import { TProduct } from '../../types'
 import { productRepository } from '../contracts/productRepository'
 
 export class productRepositoryInMemory implements productRepository {
-  idExists(id: string): boolean {
+  idExists(id: string) {
     return !!products.find((product) => product.id === id)
   }
-  create(product: TProduct): void {
-    products.push(product)
+  async create(product: TProduct) {
+    const { id, name, price, category } = product
+    await db.raw(`
+    INSERT INTO products (id, name, price, category)
+    VALUES ("${id}","${name}","${price}","${category}")
+    `)
   }
-  getProductById(id: string): TProduct | undefined {
-    return products.find((product) => product.id === id)
+  async getProductById(id: string) {
+    const result = await db.raw(`
+    SELECT * FROM products
+    WHERE id = "${id}"
+    `)
+
+    return result
   }
-  deleteProduct(id: string): void {
+  deleteProduct(id: string) {
     const product = products.findIndex((product) => product.id === id)
 
     products.splice(product, 1)
   }
-  searchProducts(query: string): TProduct[] {
-    return products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
+  async searchProducts(query: string) {
+    const result = await db.raw(
+      `SELECT * FROM products WHERE name LIKE "%${query}%"`
     )
+
+    return result
   }
 }

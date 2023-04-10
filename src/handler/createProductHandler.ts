@@ -4,7 +4,7 @@ import { productRepository } from '../repositories/contracts/productRepository'
 import { TProduct } from '../types'
 import { validator } from '../validators/contracts/validator'
 
-export function createProductHandler(
+export async function createProductHandler(
   body: TProduct,
   productRepository: productRepository,
   fieldValidator: validator
@@ -46,7 +46,7 @@ export function createProductHandler(
     throw new AppError('Category inválido', 400)
   }
 
-  const idAlreadyExists = productRepository.idExists(id)
+  const idAlreadyExists = await productRepository.idExists(id)
   if (idAlreadyExists) {
     throw new AppError('Id já cadastrado', 409)
   }
@@ -58,5 +58,5 @@ export function createProductHandler(
     category,
   }
 
-  productRepository.create(newProduct)
+  await productRepository.create(newProduct)
 }
