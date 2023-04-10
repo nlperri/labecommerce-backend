@@ -4,12 +4,12 @@ import { purchaseRepositoryInMemory } from '../repositories/implementations/purc
 import { userRepositoryInMemory } from '../repositories/implementations/userRepositoryInMemory'
 
 export class getUserPurchasesController {
-  handle(req: Request, res: Response) {
+  async handle(req: Request, res: Response) {
     const id = req.params.id
     const purchaseRepository = new purchaseRepositoryInMemory()
     const userRepository = new userRepositoryInMemory()
 
-    const userPurchases = getUserPurchasesHandler(
+    const userPurchases = await getUserPurchasesHandler(
       id,
       purchaseRepository,
       userRepository

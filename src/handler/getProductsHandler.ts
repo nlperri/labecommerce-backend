@@ -1,5 +1,8 @@
-import { products } from '../database'
+import { db } from '../database/knex'
 
-export function getProductsHandler() {
+export async function getProductsHandler() {
+  const products = await db.raw(`
+  SELECT * FROM products`)
+
   return products
 }

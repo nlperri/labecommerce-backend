@@ -6,15 +6,15 @@ import { userRepositoryInMemory } from '../repositories/implementations/userRepo
 import { fieldValidator } from '../validators/implementations/fieldValidator'
 
 export class createPurchaseController {
-  handle(req: Request, res: Response) {
-    const { userId, productId, quantity, totalPrice } = req.body
+  async handle(req: Request, res: Response) {
+    const { userId, id, paid, totalPrice } = req.body
     const purchaseRepository = new purchaseRepositoryInMemory()
     const userRepository = new userRepositoryInMemory()
     const productRepository = new productRepositoryInMemory()
     const validator = new fieldValidator()
 
-    createPurchaseHandler(
-      { userId, productId, quantity, totalPrice },
+    await createPurchaseHandler(
+      { userId, id, paid, totalPrice },
       purchaseRepository,
       userRepository,
       productRepository,
