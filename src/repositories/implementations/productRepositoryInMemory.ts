@@ -8,24 +8,15 @@ export class productRepositoryInMemory implements productRepository {
     return !!products.find((product) => product.id === id)
   }
   async create(product: TProduct) {
-    const { id, name, price, category } = product
-    await db.raw(`
-    INSERT INTO products (id, name, price, category)
-    VALUES ("${id}","${name}","${price}","${category}")
-    `)
+    await db.insert(product).into('products')
   }
   async getProductById(id: string) {
-    const result = await db.raw(`
-    SELECT * FROM products
-    WHERE id = "${id}"
-    `)
+    const result = await db('products').where({ id: id })
 
     return result
   }
-  deleteProduct(id: string) {
-    const product = products.findIndex((product) => product.id === id)
-
-    products.splice(product, 1)
+  async deleteProduct(id: string) {
+    await db.delete().from('products').where({ id: id })
   }
   async searchProducts(query: string) {
     const result = await db.raw(
@@ -33,5 +24,9 @@ export class productRepositoryInMemory implements productRepository {
     )
 
     return result
+  }
+  async editProduct(product: TProduct) {
+    const { id } = product
+    await db('products').update(product).where({ id: id })
   }
 }

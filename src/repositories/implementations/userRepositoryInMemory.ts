@@ -4,13 +4,12 @@ import { TUser } from '../../types'
 import { userRepository } from '../contracts/userRepository'
 
 export class userRepositoryInMemory implements userRepository {
-  getUserById(id: string) {
-    return users.find((user) => user.id === id)
+  async getUserById(id: string) {
+    const result = await db<TUser>('users').where({ id: id })
+    return result
   }
-  deleteUser(id: string) {
-    const user = users.findIndex((user) => user.id === id)
-
-    users.splice(user, 1)
+  async deleteUser(id: string) {
+    await db('users').del().where({ id: id })
   }
   async idExists(id: string) {
     const result: TUser[] = await db.raw(`
@@ -23,11 +22,10 @@ export class userRepositoryInMemory implements userRepository {
     return !!users.find((user) => user.email === email)
   }
   async create(user: TUser) {
-    const { id, email, password } = user
-
-    await db.raw(`
-    INSERT INTO users (id, email, password)
-    VALUES ("${id}","${email}","${password}")
-    `)
+    await db.insert(user).into('users')
+  }
+  async editUser(user: TUser) {
+    const { id } = user
+    await db('users').update(user).where({ id: id })
   }
 }

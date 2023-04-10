@@ -5,7 +5,7 @@ export class fieldValidator implements validator {
     let result = {} as fieldsReturn
 
     for (const field of fields) {
-      if (typeof field.value === 'number') {
+      if (typeof field.value === 'number' || field.value === undefined) {
         result.isValid = true
       } else {
         result.isValid = false
@@ -20,7 +20,7 @@ export class fieldValidator implements validator {
     let result = {} as fieldsReturn
 
     for (const field of fields) {
-      if (typeof field.value === 'string') {
+      if (typeof field.value === 'string' || field.value === undefined) {
         result.isValid = true
       } else {
         result.isValid = false

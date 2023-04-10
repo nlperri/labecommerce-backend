@@ -60,19 +60,6 @@ export async function createPurchaseHandler(
     throw new AppError('Usuário não encontrado', 400)
   }
 
-  // const product = await productRepository.getProductById(productId)
-
-  // if (!product) {
-  //   throw new AppError('Produto não encontrado', 400)
-  // }
-
-  // if (product.price * quantity !== totalPrice) {
-  //   throw new AppError(
-  //     'Preço total deve ser equivalente ao preço do produto e a quantidade adicionada a compra',
-  //     400
-  //   )
-  // }
-
   if (paid !== 0 && paid !== 1) {
     throw new AppError('Paid deve ser 0 ou 1', 400)
   }

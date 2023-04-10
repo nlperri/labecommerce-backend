@@ -5,13 +5,13 @@ import { TProduct } from '../types'
 import { fieldValidator } from '../validators/implementations/fieldValidator'
 
 export class editProductController {
-  handle(req: Request, res: Response) {
+  async handle(req: Request, res: Response) {
     const id = req.params.id
     const { name, price, category } = req.body as TProduct
     const productRepository = new productRepositoryInMemory()
     const validator = new fieldValidator()
 
-    editProductHandler(
+    await editProductHandler(
       { id, name, price, category },
       productRepository,
       validator

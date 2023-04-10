@@ -3,7 +3,7 @@ import { productRepository } from '../repositories/contracts/productRepository'
 import { CATEGORY, TProduct } from '../types'
 import { validator } from '../validators/contracts/validator'
 
-export function editProductHandler(
+export async function editProductHandler(
   body: TProduct,
   productRepository: productRepository,
   fieldValidator: validator
@@ -18,9 +18,9 @@ export function editProductHandler(
   const newPrice = price
   const newCategory = category || undefined
 
-  const product = productRepository.getProductById(id)
+  const product = await productRepository.getProductById(id)
 
-  if (!product) {
+  if (product.length === 0) {
     throw new AppError('Produto não encontrado', 404)
   }
 
@@ -62,7 +62,12 @@ export function editProductHandler(
     }
   }
 
-  product.name = newName || product.name
-  product.price = isNaN(newPrice) ? product.price : newPrice
-  product.category = newCategory || product.category
+  const newProduct = {
+    name: newName || product[0].name,
+    price: newPrice || product[0].price,
+    category: newCategory || product[0].category,
+    id,
+  }
+
+  await productRepository.editProduct(newProduct)
 }

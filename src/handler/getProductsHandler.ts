@@ -1,8 +1,7 @@
 import { db } from '../database/knex'
 
 export async function getProductsHandler() {
-  const products = await db.raw(`
-  SELECT * FROM products`)
+  const products = await db('products')
 
   return products
 }

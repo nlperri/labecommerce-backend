@@ -3,7 +3,7 @@ import { userRepository } from '../repositories/contracts/userRepository'
 import { TUser } from '../types'
 import { validator } from '../validators/contracts/validator'
 
-export function editUserHandler(
+export async function editUserHandler(
   body: TUser,
   userRepository: userRepository,
   fieldValidator: validator
@@ -13,9 +13,9 @@ export function editUserHandler(
   const newEmail = email || undefined
   const newPassword = password || undefined
 
-  const user = userRepository.getUserById(id)
+  const user = await userRepository.getUserById(id)
 
-  if (!user) {
+  if (user.length === 0) {
     throw new AppError('Usuário não encontrado', 404)
   }
 
@@ -37,6 +37,11 @@ export function editUserHandler(
     )
   }
 
-  user.password = newPassword || user.password
-  user.email = newEmail || user.email
+  const newUser = {
+    email: newEmail || user[0].email,
+    password: newPassword || user[0].password,
+    id,
+  }
+
+  userRepository.editUser(newUser)
 }

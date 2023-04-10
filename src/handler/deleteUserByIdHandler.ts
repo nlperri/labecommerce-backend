@@ -1,15 +1,15 @@
 import AppError from '../error'
 import { userRepository } from '../repositories/contracts/userRepository'
 
-export function deleteUserByIdHandler(
+export async function deleteUserByIdHandler(
   id: string,
   userRepository: userRepository
 ) {
-  const userToDelete = userRepository.getUserById(id)
+  const userToDelete = await userRepository.getUserById(id)
 
   if (!userToDelete) {
     throw new AppError('Usuário não encontrado', 404)
   }
 
-  userRepository.deleteUser(id)
+  await userRepository.deleteUser(id)
 }

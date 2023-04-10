@@ -1,15 +1,15 @@
 import AppError from '../error'
 import { productRepository } from '../repositories/contracts/productRepository'
 
-export function deleteProductByIdHandler(
+export async function deleteProductByIdHandler(
   id: string,
   productRepository: productRepository
 ) {
-  const productToDelete = productRepository.getProductById(id)
+  const productToDelete = await productRepository.getProductById(id)
 
-  if (!productToDelete) {
+  if (productToDelete.length === 0) {
     throw new AppError('Produto não encontrado', 404)
   }
 
-  productRepository.deleteProduct(id)
+  await productRepository.deleteProduct(id)
 }
