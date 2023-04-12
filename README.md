@@ -2,11 +2,14 @@
 
 > Status: Em desenvolvimento ⚠️
 
-<br>Projeto de criação de API com funcionadades CRUD integradas a produtos, usuários e compras implementados a biblioteca de dados em SQL.
+### Descrição:
 
-<a href="https://documenter.getpostman.com/view/25826606/2s93XvWQq5">Link da documentação da API</a>
+Projeto de criação de API com funcionadades CRUD integradas a produtos, usuários e compras implementados a biblioteca de dados em SQL.
 
-### Estruturação do banco de dados
+### Documentação da API:
+<a href="https://documenter.getpostman.com/view/25826606/2s93XvWQq5">Link</a>
+
+### Estruturação do banco de dados:
 
 <br>
 
