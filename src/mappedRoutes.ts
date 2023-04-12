@@ -12,6 +12,7 @@ import {
   getProductsController,
   getPurchasesController,
   getUsersController,
+  getPurchaseByIdController,
 } from './controllers'
 
 export const routesConfig = [
@@ -79,5 +80,10 @@ export const routesConfig = [
     method: 'put',
     path: '/products/:id',
     handler: new editProductController().handle,
+  },
+  {
+    method: 'get',
+    path: '/purchases/:id',
+    handler: new getPurchaseByIdController().handle,
   },
 ]

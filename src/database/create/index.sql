@@ -2,24 +2,29 @@
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
     password TEXT NOT NULL
 );
+
 
 CREATE TABLE products (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
     price REAL NOT NULL,
-    category TEXT NOT NULL
+    description TEXT NOT NULL,
+    image_url TEXT
 );
 
 CREATE TABLE purchases (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     total_price REAL NOT NULL,
     paid INTEGER NOT NULL DEFAULT 0,
-    delivered_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
     buyer_id TEXT NOT NULL,
     FOREIGN KEY (buyer_id) REFERENCES users(id)
 );
+
+
 
 CREATE TABLE purchases_products (
     purchase_id TEXT NOT NULL,

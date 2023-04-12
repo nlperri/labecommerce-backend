@@ -11,6 +11,4 @@ UPDATE purchases
 SET paid = 1
 WHERE id = "pu002";
 
-UPDATE purchases
-SET delivered_at = DATETIME('now')
-WHERE id = "pu002";
+

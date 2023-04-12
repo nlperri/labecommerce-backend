@@ -9,9 +9,9 @@ export async function createUserHandler(
   userRepository: userRepository,
   fieldValidator: validator
 ) {
-  const { id, email, password } = body
+  const { id, email, password, name } = body
 
-  if (!id || !email || !password) {
+  if (!id || !email || !password || !name) {
     throw new AppError('Campos inválidos', 400)
   }
 
@@ -27,6 +27,10 @@ export async function createUserHandler(
     {
       key: 'password',
       value: password,
+    },
+    {
+      key: 'name',
+      value: name,
     },
   ])
 
@@ -53,6 +57,7 @@ export async function createUserHandler(
     id,
     email,
     password,
+    name,
   }
 
   await userRepository.create(newUser)

@@ -8,13 +8,15 @@ export type TUser = {
   id: string
   email: string
   password: string
+  name: string
 }
 
 export type TProduct = {
   id: string
   name: string
   price: number
-  category: CATEGORY
+  description: string
+  imageUrl: string
 }
 
 export type TPurchase = {
@@ -22,5 +24,11 @@ export type TPurchase = {
   id: string
   paid: number
   deliveredAt?: string
-  totalPrice: number
+  totalPrice?: number
+}
+
+export type TPurchasesProducts = {
+  purchaseId: string
+  productId: string
+  quantity: number
 }

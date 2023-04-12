@@ -8,14 +8,15 @@ export async function editUserHandler(
   userRepository: userRepository,
   fieldValidator: validator
 ) {
-  const { email, password, id } = body
+  const { email, password, id, name } = body
 
   const newEmail = email || undefined
   const newPassword = password || undefined
+  const newName = name || undefined
 
   const user = await userRepository.getUserById(id)
 
-  if (user.length === 0) {
+  if (!user) {
     throw new AppError('Usuário não encontrado', 404)
   }
 
@@ -28,6 +29,10 @@ export async function editUserHandler(
       key: 'password',
       value: newPassword,
     },
+    {
+      key: 'name',
+      value: name,
+    },
   ])
 
   if (!validatedStrings.isValid) {
@@ -38,9 +43,10 @@ export async function editUserHandler(
   }
 
   const newUser = {
-    email: newEmail || user[0].email,
-    password: newPassword || user[0].password,
+    email: newEmail || user.email,
+    password: newPassword || user.password,
     id,
+    name: newName || user.name,
   }
 
   userRepository.editUser(newUser)

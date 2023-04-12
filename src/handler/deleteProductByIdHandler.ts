@@ -7,7 +7,7 @@ export async function deleteProductByIdHandler(
 ) {
   const productToDelete = await productRepository.getProductById(id)
 
-  if (productToDelete.length === 0) {
+  if (!productToDelete) {
     throw new AppError('Produto não encontrado', 404)
   }
 

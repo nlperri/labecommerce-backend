@@ -6,12 +6,12 @@ import { fieldValidator } from '../validators/implementations/fieldValidator'
 
 export class createProductController {
   async handle(req: Request, res: Response) {
-    const { category, id, name, price } = req.body as TProduct
+    const { imageUrl, description, id, name, price } = req.body as TProduct
     const productRepository = new productRepositoryInMemory()
     const validator = new fieldValidator()
 
     await createProductHandler(
-      { category, id, name, price },
+      { description, imageUrl, id, name, price },
       productRepository,
       validator
     )

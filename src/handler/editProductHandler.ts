@@ -1,6 +1,6 @@
 import AppError from '../error'
 import { productRepository } from '../repositories/contracts/productRepository'
-import { CATEGORY, TProduct } from '../types'
+import { TProduct } from '../types'
 import { validator } from '../validators/contracts/validator'
 
 export async function editProductHandler(
@@ -8,7 +8,7 @@ export async function editProductHandler(
   productRepository: productRepository,
   fieldValidator: validator
 ) {
-  const { name, price, category, id } = body
+  const { name, price, description, id, imageUrl } = body
 
   if (!body) {
     throw new AppError('Campo inválido', 400)
@@ -16,11 +16,12 @@ export async function editProductHandler(
 
   const newName = name || undefined
   const newPrice = price
-  const newCategory = category || undefined
+  const newDescription = description || undefined
+  const newImageUrl = imageUrl || undefined
 
   const product = await productRepository.getProductById(id)
 
-  if (product.length === 0) {
+  if (!product) {
     throw new AppError('Produto não encontrado', 404)
   }
 
@@ -28,6 +29,14 @@ export async function editProductHandler(
     {
       key: 'name',
       value: newName,
+    },
+    {
+      key: 'description',
+      value: newDescription,
+    },
+    {
+      key: 'imageUrl',
+      value: newImageUrl,
     },
   ])
 
@@ -52,20 +61,11 @@ export async function editProductHandler(
     )
   }
 
-  if (newCategory !== undefined) {
-    if (
-      newCategory !== CATEGORY.ACCESSORIES &&
-      newCategory !== CATEGORY.CLOTHES_AND_SHOES &&
-      newCategory !== CATEGORY.ELECTRONICS
-    ) {
-      throw new AppError('Categoria inválida', 400)
-    }
-  }
-
   const newProduct = {
-    name: newName || product[0].name,
-    price: newPrice || product[0].price,
-    category: newCategory || product[0].category,
+    name: newName || product.name,
+    price: newPrice || product.price,
+    description: newDescription || product.description,
+    imageUrl: newImageUrl || product.imageUrl,
     id,
   }
 

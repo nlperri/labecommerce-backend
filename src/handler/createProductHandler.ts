@@ -9,15 +9,17 @@ export async function createProductHandler(
   productRepository: productRepository,
   fieldValidator: validator
 ) {
-  const { id, name, price, category } = body
+  const { id, name, price, description, imageUrl } = body
 
-  if (!id || !name || !price || !category) {
+  if (!id || !name || !price || !description || !imageUrl) {
     throw new AppError('Campos inválidos', 400)
   }
 
   const validatedStrings = fieldValidator.isFieldsStrings([
     { key: 'id', value: id },
     { key: 'name', value: name },
+    { key: 'description', value: description },
+    { key: 'imageUrl', value: imageUrl },
   ])
 
   if (!validatedStrings.isValid) {
@@ -38,14 +40,6 @@ export async function createProductHandler(
     )
   }
 
-  if (
-    category !== CATEGORY.ACCESSORIES &&
-    category !== CATEGORY.CLOTHES_AND_SHOES &&
-    category !== CATEGORY.ELECTRONICS
-  ) {
-    throw new AppError('Category inválido', 400)
-  }
-
   const idAlreadyExists = await productRepository.idExists(id)
   if (idAlreadyExists) {
     throw new AppError('Id já cadastrado', 409)
@@ -55,7 +49,8 @@ export async function createProductHandler(
     id,
     name,
     price,
-    category,
+    description,
+    imageUrl,
   }
 
   await productRepository.create(newProduct)

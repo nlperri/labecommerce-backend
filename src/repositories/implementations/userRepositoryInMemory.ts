@@ -5,21 +5,19 @@ import { userRepository } from '../contracts/userRepository'
 
 export class userRepositoryInMemory implements userRepository {
   async getUserById(id: string) {
-    const result = await db<TUser>('users').where({ id: id })
+    const [result] = await db<TUser>('users').where({ id: id })
     return result
   }
   async deleteUser(id: string) {
     await db('users').del().where({ id: id })
   }
   async idExists(id: string) {
-    const result: TUser[] = await db.raw(`
-    SELECT * FROM users
-    WHERE id = "${id}"
-    `)
-    return !!result.length
+    const [result]: TUser[] = await db('users').where({ id: id })
+    return !!result
   }
-  emailExists(email: string) {
-    return !!users.find((user) => user.email === email)
+  async emailExists(email: string) {
+    const [result]: TUser[] = await db('users').where({ email: email })
+    return !!result
   }
   async create(user: TUser) {
     await db.insert(user).into('users')

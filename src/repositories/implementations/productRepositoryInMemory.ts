@@ -4,14 +4,24 @@ import { TProduct } from '../../types'
 import { productRepository } from '../contracts/productRepository'
 
 export class productRepositoryInMemory implements productRepository {
-  idExists(id: string) {
-    return !!products.find((product) => product.id === id)
+  async idExists(id: string) {
+    const [result]: TProduct[] = await db('products').where({ id: id })
+    return !!result
   }
   async create(product: TProduct) {
-    await db.insert(product).into('products')
+    const { id, name, price, description, imageUrl } = product
+
+    const newProduct = {
+      id,
+      name,
+      price,
+      description,
+      image_url: imageUrl,
+    }
+    await db.insert(newProduct).into('products')
   }
   async getProductById(id: string) {
-    const result = await db('products').where({ id: id })
+    const [result] = await db('products').where({ id: id })
 
     return result
   }
@@ -19,9 +29,7 @@ export class productRepositoryInMemory implements productRepository {
     await db.delete().from('products').where({ id: id })
   }
   async searchProducts(query: string) {
-    const result = await db.raw(
-      `SELECT * FROM products WHERE name LIKE "%${query}%"`
-    )
+    const result = await db('products').where('name', 'like', `%${query}%`)
 
     return result
   }

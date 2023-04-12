@@ -15,7 +15,7 @@ export async function getUserPurchasesHandler(
 
   const userPurchases = await purchaseRepository.getUserPurchases(id)
 
-  if (userPurchases.length === 0) {
+  if (!userPurchases) {
     throw new AppError('Compra não encontrada', 404)
   }
 

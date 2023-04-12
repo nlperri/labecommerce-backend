@@ -7,14 +7,16 @@ import { validator } from '../validators/contracts/validator'
 
 export async function createPurchaseHandler(
   body: TPurchase,
+  quantity: number,
+  productId: string,
+  productRepository: productRepository,
   purchaseRepository: purchaseRepository,
   userRepository: userRepository,
-  productRepository: productRepository,
   fieldValidator: validator
 ) {
-  const { userId, id, totalPrice, paid } = body
+  const { userId, id, paid } = body
 
-  if (!userId || !id || !paid || !totalPrice) {
+  if (!userId || !id || !paid || !productId || !quantity) {
     throw new AppError('Campos inválidos', 400)
   }
 
@@ -26,6 +28,10 @@ export async function createPurchaseHandler(
     {
       key: 'id',
       value: id,
+    },
+    {
+      key: 'productId',
+      value: productId,
     },
   ])
 
@@ -42,8 +48,8 @@ export async function createPurchaseHandler(
       value: paid,
     },
     {
-      key: 'total price',
-      value: totalPrice,
+      key: 'quantity',
+      value: quantity,
     },
   ])
 
@@ -57,12 +63,26 @@ export async function createPurchaseHandler(
   const userExists = await userRepository.idExists(userId)
 
   if (!userExists) {
-    throw new AppError('Usuário não encontrado', 400)
+    throw new AppError('Usuário não encontrado', 404)
+  }
+
+  const purchaseIdExists = await purchaseRepository.idExists(id)
+
+  if (purchaseIdExists) {
+    throw new AppError('Id de compra já cadastrado')
   }
 
   if (paid !== 0 && paid !== 1) {
     throw new AppError('Paid deve ser 0 ou 1', 400)
   }
+
+  const product = await productRepository.getProductById(productId)
+
+  if (!product) {
+    throw new AppError('Produto não encontrado', 404)
+  }
+
+  const totalPrice = product.price * quantity
 
   const newPurchase: TPurchase = {
     userId,
@@ -72,4 +92,6 @@ export async function createPurchaseHandler(
   }
 
   await purchaseRepository.create(newPurchase)
+
+  await purchaseRepository.createPurchasesProducts(id, productId, quantity)
 }
