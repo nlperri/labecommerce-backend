@@ -11,5 +11,7 @@ export async function deleteProductByIdHandler(
     throw new AppError('Produto não encontrado', 404)
   }
 
+  await productRepository.deleteProductFromPurchasesProducts(id)
+
   await productRepository.deleteProduct(id)
 }

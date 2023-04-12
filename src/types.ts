@@ -32,3 +32,8 @@ export type TPurchasesProducts = {
   productId: string
   quantity: number
 }
+
+export type TProductInput = {
+  productId: string
+  quantity: number
+}

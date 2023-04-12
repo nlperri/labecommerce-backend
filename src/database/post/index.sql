@@ -19,15 +19,15 @@ VALUES ("p006", "Pulseira perolada", 69.9, "Acessórios");
 
 INSERT INTO purchases (id, total_price, buyer_id)
 VALUES ("pu001", 199.9, "u001"),
-("pu002", 349.9, "u001"),
+("pu001", 349.9, "u001"),
 ("pu003", 69.9,"u002");
 
 INSERT INTO purchases_products 
 VALUES ("pu001", "p001", 3),
 ("pu001", "p003", 1),
-("pu002", "p002", 2);
+("pu002", "p003", 2);
 
 INSERT INTO purchases_products
-VALUES ("pu003", "p002", 1),
+VALUES ("pu003", "p003", 1),
 ("pu003", "p001", 2);
 

@@ -4,7 +4,7 @@ import { purchaseRepository } from '../contracts/purchaseRepository'
 
 export class purchaseRepositoryInMemory implements purchaseRepository {
   async getUserPurchases(id: string) {
-    const [result] = await db('purchases').where({ buyer_id: id })
+    const result = await db('purchases').where({ buyer_id: id })
 
     return result
   }
@@ -37,6 +37,12 @@ export class purchaseRepositoryInMemory implements purchaseRepository {
     }
 
     await db('purchases_products').insert(newPurchaseProduct)
+  }
+  async deletePurchaseById(id: string) {
+    await db.delete().from('purchases').where({ id: id })
+  }
+  async deletePurchaseFromPurchasesProducts(id: string) {
+    await db.delete().from('purchases_products').where({ purchase_id: id })
   }
 
   async getPurchaseById(id: string) {

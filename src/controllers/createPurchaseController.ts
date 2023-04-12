@@ -7,7 +7,7 @@ import { fieldValidator } from '../validators/implementations/fieldValidator'
 
 export class createPurchaseController {
   async handle(req: Request, res: Response) {
-    const { userId, id, paid, productId, quantity } = req.body
+    const { userId, id, paid, products } = req.body
     const purchaseRepository = new purchaseRepositoryInMemory()
     const userRepository = new userRepositoryInMemory()
     const productRepository = new productRepositoryInMemory()
@@ -15,8 +15,7 @@ export class createPurchaseController {
 
     await createPurchaseHandler(
       { userId, id, paid },
-      quantity,
-      productId,
+      products,
       productRepository,
       purchaseRepository,
       userRepository,

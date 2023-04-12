@@ -11,6 +11,10 @@ export class userRepositoryInMemory implements userRepository {
   async deleteUser(id: string) {
     await db('users').del().where({ id: id })
   }
+  async deleteUserFromPurchases(id: string) {
+    await db.delete().from('purchases').where({ buyer_id: id })
+  }
+
   async idExists(id: string) {
     const [result]: TUser[] = await db('users').where({ id: id })
     return !!result

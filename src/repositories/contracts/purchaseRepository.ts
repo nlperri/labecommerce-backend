@@ -5,6 +5,8 @@ export interface purchaseRepository {
   create: (purchase: TPurchase) => Promise<void>
   idExists: (id: string) => Promise<boolean>
   getPurchaseById: (id: string) => Promise<any>
+  deletePurchaseById: (id: string) => Promise<void>
+  deletePurchaseFromPurchasesProducts: (id: string) => Promise<void>
   createPurchasesProducts: (
     id: string,
     productId: string,

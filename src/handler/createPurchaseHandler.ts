@@ -2,13 +2,12 @@ import AppError from '../error'
 import { productRepository } from '../repositories/contracts/productRepository'
 import { purchaseRepository } from '../repositories/contracts/purchaseRepository'
 import { userRepository } from '../repositories/contracts/userRepository'
-import { TPurchase } from '../types'
+import { TProductInput, TPurchase } from '../types'
 import { validator } from '../validators/contracts/validator'
 
 export async function createPurchaseHandler(
   body: TPurchase,
-  quantity: number,
-  productId: string,
+  products: TProductInput[],
   productRepository: productRepository,
   purchaseRepository: purchaseRepository,
   userRepository: userRepository,
@@ -16,9 +15,15 @@ export async function createPurchaseHandler(
 ) {
   const { userId, id, paid } = body
 
-  if (!userId || !id || !paid || !productId || !quantity) {
+  if (!userId || !id || (paid !== 0 && paid !== 1) || products.length === 0) {
     throw new AppError('Campos inválidos', 400)
   }
+
+  products.forEach((product) => {
+    if (!product.productId || !product.quantity) {
+      throw new AppError('Campos inválidos', 400)
+    }
+  })
 
   const validatedStrings = fieldValidator.isFieldsStrings([
     {
@@ -29,10 +34,6 @@ export async function createPurchaseHandler(
       key: 'id',
       value: id,
     },
-    {
-      key: 'productId',
-      value: productId,
-    },
   ])
 
   if (!validatedStrings.isValid) {
@@ -42,14 +43,42 @@ export async function createPurchaseHandler(
     )
   }
 
+  products.forEach((product) => {
+    let isString
+    let isNumber
+
+    isString = fieldValidator.isFieldsStrings([
+      {
+        key: 'productId',
+        value: product.productId,
+      },
+    ])
+
+    if (!isString.isValid) {
+      throw new AppError(
+        `O campo ${isString.failedField} deve ser do tipo string`,
+        400
+      )
+    }
+
+    isNumber = fieldValidator.isFieldsNumbers([
+      {
+        key: 'quantity',
+        value: product.quantity,
+      },
+    ])
+
+    if (!isNumber.isValid) {
+      throw new AppError(
+        `O campo ${isNumber.failedField} deve ser do tipo number`
+      )
+    }
+  })
+
   const validatedNumbers = fieldValidator.isFieldsNumbers([
     {
       key: 'paid',
       value: paid,
-    },
-    {
-      key: 'quantity',
-      value: quantity,
     },
   ])
 
@@ -72,17 +101,20 @@ export async function createPurchaseHandler(
     throw new AppError('Id de compra já cadastrado')
   }
 
-  if (paid !== 0 && paid !== 1) {
-    throw new AppError('Paid deve ser 0 ou 1', 400)
-  }
+  const productsExists = products.map(async (product) => {
+    return await productRepository.getProductById(product.productId)
+  })
 
-  const product = await productRepository.getProductById(productId)
+  console.log(productsExists)
 
-  if (!product) {
+  if (productsExists.length === 0) {
     throw new AppError('Produto não encontrado', 404)
   }
 
-  const totalPrice = product.price * quantity
+  const totalPrice = products.reduce(
+    (acc, product) => acc + product.quantity,
+    0
+  )
 
   const newPurchase: TPurchase = {
     userId,
@@ -93,5 +125,11 @@ export async function createPurchaseHandler(
 
   await purchaseRepository.create(newPurchase)
 
-  await purchaseRepository.createPurchasesProducts(id, productId, quantity)
+  products.forEach(async (product) => {
+    await purchaseRepository.createPurchasesProducts(
+      id,
+      product.productId,
+      product.quantity
+    )
+  })
 }

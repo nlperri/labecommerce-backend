@@ -28,6 +28,9 @@ export class productRepositoryInMemory implements productRepository {
   async deleteProduct(id: string) {
     await db.delete().from('products').where({ id: id })
   }
+  async deleteProductFromPurchasesProducts(id: string) {
+    await db.delete().from('purchases_products').where({ product_id: id })
+  }
   async searchProducts(query: string) {
     const result = await db('products').where('name', 'like', `%${query}%`)
 
