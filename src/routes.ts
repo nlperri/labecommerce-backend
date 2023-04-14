@@ -1,4 +1,4 @@
-import { router } from '.'
+import { router } from './app'
 import { routesConfig } from './mappedRoutes'
 
 export function routerFactory() {
