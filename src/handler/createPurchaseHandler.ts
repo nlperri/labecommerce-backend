@@ -105,8 +105,6 @@ export async function createPurchaseHandler(
     return await productRepository.getProductById(product.productId)
   })
 
-  console.log(productsExists)
-
   if (productsExists.length === 0) {
     throw new AppError('Produto não encontrado', 404)
   }
