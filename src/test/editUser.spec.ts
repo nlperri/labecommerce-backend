@@ -1,4 +1,4 @@
-import { createUserHandler } from '../handler'
+import { createUserHandler, editUserHandler } from '../handler'
 import { userRepository } from '../repositories/contracts/userRepository'
 import { TUser } from '../types'
 import { fieldsReturn, validator } from '../validators/contracts/validator'
@@ -12,6 +12,12 @@ describe('editUser', () => {
     name: 'some-name',
     id: 'some-id',
     password: 'some-password',
+  }
+  const editedUserMock = {
+    email: 'some-new-email',
+    name: 'some-new-name',
+    password: 'some-new-password',
+    id: userMock.id,
   }
   beforeEach(() => {
     userRepository = {
@@ -52,14 +58,9 @@ describe('editUser', () => {
 
     await userRepository.getUserById(userMock.id)
 
-    const editedUserMock = {
-      email: 'some-new-email',
-      name: 'some-new-name',
-      password: 'some-new-password',
-      id: userMock.id,
-    }
-
     await userRepository.editUser(editedUserMock)
+
+    await editUserHandler(editedUserMock, userRepository, fieldValidator)
 
     const userExpectation = editedUserMock
     expect(userExpectation).toHaveProperty('id')
@@ -72,5 +73,35 @@ describe('editUser', () => {
     expect(userExpectation.password).toBe(
       'some-new-password' || userMock.password
     )
+  })
+  it('should not edit an user if doesnt have any param', async () => {
+    const emptyResponse = {} as TUser
+
+    const error = async () =>
+      await editUserHandler(emptyResponse, userRepository, fieldValidator)
+
+    try {
+      await error()
+    } catch (error) {
+      expect(error).toMatchObject({
+        statusCode: 400,
+        message: 'Campos inválidos',
+      })
+    }
+  })
+  it('should not edit and user if id doesnt exist', async () => {
+    jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(undefined)
+
+    const error = () =>
+      editUserHandler(userMock, userRepository, fieldValidator)
+
+    try {
+      await error()
+    } catch (error) {
+      expect(error).toMatchObject({
+        statusCode: 404,
+        message: 'Usuário não encontrado',
+      })
+    }
   })
 })

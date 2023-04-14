@@ -10,6 +10,10 @@ export async function editUserHandler(
 ) {
   const { email, password, id, name } = body
 
+  if (!email && !password && !name) {
+    throw new AppError('Campos inválidos', 400)
+  }
+
   const newEmail = email || undefined
   const newPassword = password || undefined
   const newName = name || undefined
