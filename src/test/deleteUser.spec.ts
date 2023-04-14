@@ -1,7 +1,7 @@
 import { createUserHandler, deleteUserByIdHandler } from '../handler'
 import { purchaseRepository } from '../repositories/contracts/purchaseRepository'
 import { userRepository } from '../repositories/contracts/userRepository'
-import { TPurchase, TUser } from '../types'
+import { TPurchase, TPurchasesProducts, TUser } from '../types'
 import { fieldsReturn, validator } from '../validators/contracts/validator'
 
 describe('deleteUser', () => {
@@ -10,7 +10,7 @@ describe('deleteUser', () => {
   let purchaseRepository: purchaseRepository
   let users: TUser[] = []
   let purchases: TPurchase[] = []
-
+  let purchasesProducts: TPurchasesProducts[] = []
   const userMock = {
     email: 'some-email',
     name: 'some-name',
@@ -20,9 +20,16 @@ describe('deleteUser', () => {
 
   const purchaseMock = {
     userId: 'some-user-purchase-id',
-    id: 'some-id',
+    id: 'some-purhcase-id',
     paid: 1,
   }
+
+  const purchaseProductsMock = {
+    purchaseId: 'some-purchase-id',
+    productId: 'some-product-id',
+    quantity: 1,
+  }
+
   beforeEach(() => {
     userRepository = {
       idExists: async (id: string) => false,
@@ -73,11 +80,17 @@ describe('deleteUser', () => {
       getPurchaseById: async function (id: string): Promise<any> {
         throw new Error('Function not implemented.')
       },
-      deletePurchaseById: async function (id: string): Promise<void> {},
+      deletePurchaseById: async function (id: string): Promise<void> {
+        const index = purchases.findIndex((purchases) => purchases.id === id)
+        purchases.splice(index, 1)
+      },
       deletePurchaseFromPurchasesProducts: async function (
         id: string
       ): Promise<void> {
-        throw new Error('Function not implemented.')
+        const index = purchasesProducts.findIndex(
+          (purchaseProduct) => purchaseProduct.purchaseId === id
+        )
+        purchasesProducts.splice(index, 1)
       },
       createPurchasesProducts: async function (
         id: string,
@@ -93,6 +106,34 @@ describe('deleteUser', () => {
   })
   it('should be able to delete user by its id', async () => {
     await createUserHandler(userMock, userRepository, fieldValidator)
+
+    await deleteUserByIdHandler(userMock.id, userRepository, purchaseRepository)
+
+    const userExpectation = users
+
+    expect(userExpectation).toStrictEqual([])
+  })
+  it('should not be able to delete user if id doesnt exist', async () => {
+    jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(undefined)
+
+    const error = () =>
+      deleteUserByIdHandler(userMock.id, userRepository, purchaseRepository)
+
+    try {
+      await error()
+    } catch (error) {
+      expect(error).toMatchObject({
+        statusCode: 404,
+        message: 'Usuário não encontrado',
+      })
+    }
+  })
+  it('should delete user if has any purchases', async () => {
+    await createUserHandler(userMock, userRepository, fieldValidator)
+
+    jest
+      .spyOn(purchaseRepository, 'getUserPurchases')
+      .mockResolvedValueOnce([purchaseMock])
 
     await deleteUserByIdHandler(userMock.id, userRepository, purchaseRepository)
 
