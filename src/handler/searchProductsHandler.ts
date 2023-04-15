@@ -7,7 +7,7 @@ export async function searchProductsHandler(
 ) {
   const result = await productRepository.searchProducts(query)
 
-  if (query.length === 0) {
+  if (!query) {
     throw new AppError('Campos inválidos', 400)
   }
 
