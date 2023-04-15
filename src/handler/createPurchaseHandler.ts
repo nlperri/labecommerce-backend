@@ -2,7 +2,7 @@ import AppError from '../error'
 import { productRepository } from '../repositories/contracts/productRepository'
 import { purchaseRepository } from '../repositories/contracts/purchaseRepository'
 import { userRepository } from '../repositories/contracts/userRepository'
-import { TProductInput, TPurchase } from '../types'
+import { TProduct, TProductInput, TPurchase } from '../types'
 import { validator } from '../validators/contracts/validator'
 
 export async function createPurchaseHandler(
@@ -101,18 +101,27 @@ export async function createPurchaseHandler(
     throw new AppError('Id de compra já cadastrado')
   }
 
-  const productsExists = products.map(async (product) => {
-    return await productRepository.getProductById(product.productId)
-  })
+  const returnedProducts = await Promise.all(
+    products.map(async (product) => {
+      return await productRepository.getProductById(product.productId)
+    })
+  )
 
-  if (productsExists.length === 0) {
+  if (returnedProducts.length === 0) {
     throw new AppError('Produto não encontrado', 404)
   }
 
-  const totalPrice = products.reduce(
+  const productsQuantity = products.reduce(
     (acc, product) => acc + product.quantity,
     0
   )
+
+  const productsPrice = returnedProducts.reduce((acc, product) => {
+    if (!product) return acc
+    return acc + product.price
+  }, 0)
+
+  const totalPrice = productsQuantity * productsPrice
 
   const newPurchase: TPurchase = {
     userId,
