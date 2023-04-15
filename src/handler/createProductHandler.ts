@@ -1,4 +1,3 @@
-import { CATEGORY } from '../types'
 import AppError from '../error'
 import { productRepository } from '../repositories/contracts/productRepository'
 import { TProduct } from '../types'

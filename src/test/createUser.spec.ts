@@ -70,7 +70,7 @@ describe('CreateUserHandler', () => {
     expect(userExpectation.password).toBe('some-password')
   })
 
-  it('should not create a user without required params', async () => {
+  it('should not create an user without required params', async () => {
     const failedUserPayload = {} as TUser
 
     const error = async () =>
@@ -86,7 +86,7 @@ describe('CreateUserHandler', () => {
     }
   })
 
-  it('should not create a user with email already registered', async () => {
+  it('should not create an user with email already registered', async () => {
     await createUserHandler(userMock, userRepository, fieldValidator)
 
     jest.spyOn(userRepository, 'emailExists').mockResolvedValueOnce(true)
@@ -104,8 +104,6 @@ describe('CreateUserHandler', () => {
     }
   })
   it('should not create a user with id already registered', async () => {
-    await createUserHandler(userMock, userRepository, fieldValidator)
-
     jest.spyOn(userRepository, 'idExists').mockResolvedValueOnce(true)
 
     const error = async () =>
