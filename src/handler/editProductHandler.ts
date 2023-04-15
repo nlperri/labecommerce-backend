@@ -10,8 +10,8 @@ export async function editProductHandler(
 ) {
   const { name, price, description, id, imageUrl } = body
 
-  if (!body) {
-    throw new AppError('Campo inválido', 400)
+  if (!name && !price && !description && !imageUrl) {
+    throw new AppError('Campos inválidos', 400)
   }
 
   const newName = name || undefined

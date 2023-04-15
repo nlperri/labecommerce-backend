@@ -53,6 +53,7 @@ describe('editUser', () => {
       },
     }
   })
+
   afterEach(() => {
     users = []
   })
@@ -92,7 +93,7 @@ describe('editUser', () => {
       })
     }
   })
-  it('should not edit and user if id doesnt exist', async () => {
+  it('should not edit an user if id doesnt exist', async () => {
     jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(undefined)
 
     const error = () =>
