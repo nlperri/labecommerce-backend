@@ -1,6 +1,7 @@
 import { TPurchase } from '../../types'
 
 export interface purchaseRepository {
+  getPurchases: () => Promise<TPurchase[] | []>
   getUserPurchases: (id: string) => Promise<TPurchase[] | []>
   create: (purchase: TPurchase) => Promise<void>
   idExists: (id: string) => Promise<boolean>

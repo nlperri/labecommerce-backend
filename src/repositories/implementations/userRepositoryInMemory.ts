@@ -4,6 +4,10 @@ import { TUser } from '../../types'
 import { userRepository } from '../contracts/userRepository'
 
 export class userRepositoryInMemory implements userRepository {
+  async getUsers() {
+    const result = await db('users').select('id', 'name', 'email')
+    return result
+  }
   async getUserById(id: string) {
     const [result] = await db<TUser>('users').where({ id: id })
     return result

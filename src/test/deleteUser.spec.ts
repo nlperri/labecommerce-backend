@@ -32,6 +32,9 @@ describe('deleteUser', () => {
 
   beforeEach(() => {
     userRepository = {
+      getUsers: async () => {
+        throw new Error('Function not implemented.')
+      },
       idExists: async (id: string) => false,
       emailExists: async (email: string) => false,
       create: async (user: TUser) => {
@@ -66,6 +69,9 @@ describe('deleteUser', () => {
       },
     }
     purchaseRepository = {
+      getPurchases: async function () {
+        throw new Error('Function not implemented.')
+      },
       getUserPurchases: async function (
         userId: string
       ): Promise<TPurchase[] | []> {

@@ -8,4 +8,5 @@ export interface userRepository {
   deleteUser: (id: string) => Promise<void>
   deleteUserFromPurchases: (id: string) => Promise<void>
   editUser: (user: TUser) => Promise<void>
+  getUsers: () => Promise<TUser[] | []>
 }

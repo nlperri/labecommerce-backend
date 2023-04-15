@@ -3,6 +3,10 @@ import { TPurchase } from '../../types'
 import { purchaseRepository } from '../contracts/purchaseRepository'
 
 export class purchaseRepositoryInMemory implements purchaseRepository {
+  async getPurchases() {
+    const result = await db('purchases')
+    return result
+  }
   async getUserPurchases(id: string) {
     const result = await db('purchases').where({ buyer_id: id })
 

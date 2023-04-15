@@ -21,6 +21,9 @@ describe('editUser', () => {
   }
   beforeEach(() => {
     userRepository = {
+      getUsers: async () => {
+        throw new Error('Function not implemented.')
+      },
       idExists: async (id: string) => false,
       emailExists: async (email: string) => false,
       create: async (user: TUser) => {

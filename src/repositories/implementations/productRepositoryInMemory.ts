@@ -4,6 +4,10 @@ import { TProduct } from '../../types'
 import { productRepository } from '../contracts/productRepository'
 
 export class productRepositoryInMemory implements productRepository {
+  async getProducts() {
+    const result = await db('products')
+    return result
+  }
   async idExists(id: string) {
     const [result]: TProduct[] = await db('products').where({ id: id })
     return !!result
