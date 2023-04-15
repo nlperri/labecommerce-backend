@@ -24,12 +24,6 @@ describe('deleteUser', () => {
     paid: 1,
   }
 
-  const purchaseProductsMock = {
-    purchaseId: 'some-purchase-id',
-    productId: 'some-product-id',
-    quantity: 1,
-  }
-
   beforeEach(() => {
     userRepository = {
       getUsers: async () => {

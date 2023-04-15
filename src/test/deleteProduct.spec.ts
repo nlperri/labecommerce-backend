@@ -1,13 +1,20 @@
-import { createProductHandler } from '../handler'
+import { createProductHandler, deleteProductByIdHandler } from '../handler'
 import { productRepository } from '../repositories/contracts/productRepository'
-import { TProduct } from '../types'
+import { TProduct, TPurchasesProducts } from '../types'
 import { fieldsReturn } from '../validators/contracts/validator'
 import { fieldValidator } from '../validators/implementations/fieldValidator'
 
-describe('createProduct', () => {
+describe('deleteProduct', () => {
   let productRepository: productRepository
   let fieldValidator: fieldValidator
   let products: TProduct[] = []
+  const purchasesProducts: TPurchasesProducts[] = [
+    {
+      productId: 'some-id',
+      purchaseId: 'some-purchase-id',
+      quantity: 1,
+    },
+  ]
 
   const productMock = {
     id: 'some-id',
@@ -32,18 +39,22 @@ describe('createProduct', () => {
       },
 
       async getProductById(id: string) {
-        throw new Error('Function not implemented.')
+        return productMock
       },
 
       async deleteProduct(id: string) {
-        throw new Error('Function not implemented.')
+        const index = products.findIndex((product) => product.id === id)
+        products.splice(index, 1)
       },
 
       async editProduct(product: TProduct) {
         throw new Error('Function not implemented.')
       },
       async deleteProductFromPurchasesProducts(id: string) {
-        throw new Error('Function not implemented.')
+        const index = purchasesProducts.findIndex(
+          (purchaseProduct) => purchaseProduct.productId === id
+        )
+        purchasesProducts.splice(index, 1)
       },
       async searchProducts(query: string) {
         throw new Error('Function not implemented.')
@@ -65,54 +76,30 @@ describe('createProduct', () => {
   afterEach(() => {
     products = []
   })
-  it('should be able to create a product', async () => {
+  it('should be able to delete product by its id', async () => {
     await createProductHandler(productMock, productRepository, fieldValidator)
 
-    const productExpectation = products[0]
+    await deleteProductByIdHandler(productMock.id, productRepository)
 
-    expect(productExpectation).toHaveProperty('id')
-    expect(productExpectation).toHaveProperty('name')
-    expect(productExpectation).toHaveProperty('price')
-    expect(productExpectation).toHaveProperty('description')
-    expect(productExpectation).toHaveProperty('imageUrl')
-    expect(productExpectation.id).toBe('some-id')
-    expect(productExpectation.name).toBe('some-name')
-    expect(productExpectation.price).toBe(1)
-    expect(productExpectation.description).toBe('some-description')
-    expect(productExpectation.imageUrl).toBe('some-url')
+    const productExpectation = products
+
+    expect(productExpectation).toStrictEqual([])
   })
 
-  it('should not create a product without required params', async () => {
-    const failedProductPayload = {} as TProduct
+  it('should not be able to delete product if id doesnt exist', async () => {
+    jest
+      .spyOn(productRepository, 'getProductById')
+      .mockResolvedValueOnce(undefined)
 
     const error = async () =>
-      createProductHandler(
-        failedProductPayload,
-        productRepository,
-        fieldValidator
-      )
+      await deleteProductByIdHandler(productMock.id, productRepository)
 
     try {
       await error()
     } catch (error) {
       expect(error).toMatchObject({
-        statusCode: 400,
-        message: 'Campos inválidos',
-      })
-    }
-  })
-  it('should not create a product if id is already registered', async () => {
-    jest.spyOn(productRepository, 'idExists').mockResolvedValueOnce(true)
-
-    const error = async () =>
-      createProductHandler(productMock, productRepository, fieldValidator)
-
-    try {
-      await error()
-    } catch (error) {
-      expect(error).toMatchObject({
-        statusCode: 409,
-        message: 'Id já cadastrado',
+        statusCode: 404,
+        message: 'Produto não encontrado',
       })
     }
   })
