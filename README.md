@@ -7,6 +7,7 @@
 Projeto de criação de API com funcionadades CRUD integradas a produtos, usuários e compras implementados a biblioteca de dados em SQL.
 
 ### Documentação da API:
+
 <a href="https://documenter.getpostman.com/view/25826606/2s93XvWQq5">Link</a>
 
 ### Estruturação do banco de dados:
@@ -27,10 +28,10 @@ Projeto de criação de API com funcionadades CRUD integradas a produtos, usuár
 - [x] Editar informações do produto
 - [x] Deletar usuário
 - [x] Deletar produto
+- [x] Testes unitários
 
 ### Funcionalidades em desenvolvimento:
 
-- [ ] Testes unitários
 - [ ] Deploy
 
 ### Tecnologias utilizadas:

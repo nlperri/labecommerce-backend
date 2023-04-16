@@ -5,7 +5,7 @@ export async function getPurchaseByIdHandle(
   id: string,
   purchaseRepository: purchaseRepository
 ) {
-  const purchaseExists = purchaseRepository.idExists(id)
+  const purchaseExists = await purchaseRepository.idExists(id)
 
   if (!purchaseExists) {
     throw new AppError('Compra não encontrada', 404)

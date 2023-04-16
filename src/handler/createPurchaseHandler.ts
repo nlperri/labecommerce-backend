@@ -98,7 +98,7 @@ export async function createPurchaseHandler(
   const purchaseIdExists = await purchaseRepository.idExists(id)
 
   if (purchaseIdExists) {
-    throw new AppError('Id de compra já cadastrado')
+    throw new AppError('Id de compra já cadastrado', 409)
   }
 
   const returnedProducts = await Promise.all(
@@ -107,7 +107,7 @@ export async function createPurchaseHandler(
     })
   )
 
-  if (returnedProducts.length === 0) {
+  if (!returnedProducts.some(Boolean)) {
     throw new AppError('Produto não encontrado', 404)
   }
 

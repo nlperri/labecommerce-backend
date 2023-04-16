@@ -1,13 +1,12 @@
-import { createPurchaseHandler } from '../handler'
+import { createPurchaseHandler, getPurchasesHandler } from '../handler'
 import { productRepository } from '../repositories/contracts/productRepository'
 import { purchaseRepository } from '../repositories/contracts/purchaseRepository'
 import { userRepository } from '../repositories/contracts/userRepository'
-import { TPurchasesProducts } from '../types'
-import { TProduct, TProductInput, TPurchase, TUser } from '../types'
+import { TProduct, TPurchase, TPurchasesProducts, TUser } from '../types'
 import { fieldsReturn } from '../validators/contracts/validator'
 import { fieldValidator } from '../validators/implementations/fieldValidator'
 
-describe('createPurchase', () => {
+describe('getPurchases', () => {
   let productRepository: productRepository
   let purchaseRepository: purchaseRepository
   let userRepository: userRepository
@@ -39,7 +38,7 @@ describe('createPurchase', () => {
   beforeEach(() => {
     purchaseRepository = {
       async getPurchases() {
-        throw new Error('Function not implemented.')
+        return purchases
       },
       async getUserPurchases() {
         throw new Error('Function not implemented.')
@@ -140,7 +139,7 @@ describe('createPurchase', () => {
     purchasesProducts = []
   })
 
-  it('should be able to create a purchase', async () => {
+  it('should be able to list all purchases', async () => {
     await createPurchaseHandler(
       purchaseMock,
       productInputMock,
@@ -150,137 +149,10 @@ describe('createPurchase', () => {
       fieldValidator
     )
 
-    const totalPrice = productInputMock[0].quantity * productMock.price
+    const returnedPurchases = await getPurchasesHandler(purchaseRepository)
 
-    const purchaseExpectation = purchases[0]
+    const purchaseExpectation = purchases
 
-    expect(purchaseExpectation).toHaveProperty('userId')
-    expect(purchaseExpectation).toHaveProperty('id')
-    expect(purchaseExpectation).toHaveProperty('paid')
-    expect(purchaseExpectation).toHaveProperty('totalPrice')
-    expect(purchaseExpectation.userId).toBe('user-id')
-    expect(purchaseExpectation.id).toBe('purchase-id')
-    expect(purchaseExpectation.paid).toBe(0)
-    expect(purchaseExpectation.totalPrice).toBe(totalPrice)
-  })
-
-  it('should not create a purchase without required params', async () => {
-    const failedPurchasePayload = {} as TPurchase
-
-    const error = async () =>
-      await createPurchaseHandler(
-        failedPurchasePayload,
-        productInputMock,
-        productRepository,
-        purchaseRepository,
-        userRepository,
-        fieldValidator
-      )
-
-    try {
-      await error()
-    } catch (error) {
-      expect(error).toMatchObject({
-        statusCode: 400,
-        message: 'Campos inválidos',
-      })
-    }
-  })
-
-  it('should not create a purchase if product details are not valid', async () => {
-    const failedProductInputPayload = [] as TProductInput[]
-
-    const error = async () =>
-      await createPurchaseHandler(
-        purchaseMock,
-        failedProductInputPayload,
-        productRepository,
-        purchaseRepository,
-        userRepository,
-        fieldValidator
-      )
-
-    try {
-      await error()
-    } catch (error) {
-      expect(error).toMatchObject({
-        statusCode: 400,
-        message: 'Campos inválidos',
-      })
-    }
-  })
-
-  it('should not create a purchase if user id doesnt exist', async () => {
-    jest.spyOn(userRepository, 'idExists').mockResolvedValueOnce(false)
-
-    const error = async () =>
-      await createPurchaseHandler(
-        purchaseMock,
-        productInputMock,
-        productRepository,
-        purchaseRepository,
-        userRepository,
-        fieldValidator
-      )
-
-    try {
-      await error()
-    } catch (error) {
-      expect(error).toMatchObject({
-        statusCode: 404,
-        message: 'Usuário não encontrado',
-      })
-    }
-  })
-
-  it('should not create a purchase if id already registered', async () => {
-    jest.spyOn(purchaseRepository, 'idExists').mockResolvedValueOnce(true)
-
-    const error = async () =>
-      await createPurchaseHandler(
-        purchaseMock,
-        productInputMock,
-        productRepository,
-        purchaseRepository,
-        userRepository,
-        fieldValidator
-      )
-
-    try {
-      await error()
-    } catch (error) {
-      expect(error).toMatchObject({
-        statusCode: 409,
-        message: 'Id de compra já cadastrado',
-      })
-    }
-  })
-
-  it('should not create a purchase if product id doesnt exist', async () => {
-    jest
-
-    jest
-      .spyOn(productRepository, 'getProductById')
-      .mockResolvedValueOnce(undefined)
-
-    const error = async () =>
-      await createPurchaseHandler(
-        purchaseMock,
-        productInputMock,
-        productRepository,
-        purchaseRepository,
-        userRepository,
-        fieldValidator
-      )
-    console.log('aqui')
-    try {
-      await error()
-    } catch (error) {
-      console.log(error)
-      expect(error).toMatchObject({
-        statusCode: 404,
-        message: 'Produto não encontrado',
-      })
-    }
+    expect(returnedPurchases).toEqual(purchaseExpectation)
   })
 })
