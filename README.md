@@ -1,6 +1,6 @@
 # Projeto Labecommerce Back-end
 
-> Status: Em desenvolvimento ⚠️
+> Status: Finalizado ⚠️
 
 ### Descrição:
 
